@@ -1,7 +1,7 @@
 import { Exact, Rule, Whitespace } from './base.ts'
 import { Ast } from './deps.ts'
 import { Expression } from './expression.ts'
-import { any, format, repeat, seq, token } from './rules.ts'
+import { any, format, optional, repeat, seq, token } from './rules.ts'
 
 export interface BuildBinaryExpressionParams<T extends Ast.BinaryExpression> {
 	types: T['$'][]
@@ -18,9 +18,9 @@ export function buildBinaryExpression<T extends Ast.BinaryExpression>(params: Bu
 		),
 		repeat(
 			seq([
-				Whitespace(),
+				optional(Whitespace()),
 				token('keyword.operator', any(params.operators.map((operator) => Exact(operator)))),
-				Whitespace(),
+				optional(Whitespace()),
 				format(
 					getExpression(),
 					({ node, span }) => ({ expr: node, span }),
