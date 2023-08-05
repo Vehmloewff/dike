@@ -94,17 +94,15 @@ export function optional<T>(rule: Rule<T>): Rule<T | null> {
 	}
 }
 
-export function token(name: string, rule: Rule<unknown>): Rule<string> {
+export function token<T>(name: string, rule: Rule<T>): Rule<T> {
 	return (text, start) => {
 		const res = rule(text, start)
 		if (!res) return null
 
 		const end = start + res.consumed
-		const content = text.slice(0, res.consumed)
 
 		return {
 			...res,
-			node: content,
 			tokens: [...res.tokens, { name, span: { start, end } }],
 		}
 	}

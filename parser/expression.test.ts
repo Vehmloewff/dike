@@ -22,6 +22,21 @@ Deno.test('NumberLiteral parses floats', () => {
 	asserts.assertEquals(parse('99.'), { $: 'NumberLiteral', content: 99 })
 })
 
+Deno.test('BooleanLiteral parses', () => {
+	asserts.assertEquals(parse('true'), { $: 'BooleanLiteral', content: true })
+	asserts.assertEquals(parse('false'), { $: 'BooleanLiteral', content: false })
+})
+
+Deno.test('StringLiteral parses', () => {
+	asserts.assertEquals(parse(`'this is a string'`), { $: 'StringLiteral', content: 'this is a string' })
+	asserts.assertThrows(() => parse(`'not a string`))
+	asserts.assertThrows(() => parse(`'not one either"`))
+	asserts.assertEquals(parse(`"one o' here"`), { $: 'StringLiteral', content: 'one o\' here' })
+	asserts.assertEquals(parse(`"escaped \\""`), { $: 'StringLiteral', content: 'escaped "' })
+	asserts.assertEquals(parse(`"escaped escape\\\\"`), { $: 'StringLiteral', content: 'escaped escape\\' })
+	asserts.assertThrows(() => parse(`'not a string\\'`))
+})
+
 Deno.test('AdditiveExpression parses', () => {
 	const code = '3 + 4'
 
