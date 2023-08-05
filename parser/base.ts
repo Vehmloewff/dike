@@ -49,7 +49,7 @@ export function Match(regex: RegExp): Rule<string> {
 		const match = res[0]
 		if (!text.startsWith(match)) return null
 
-		return { consumed: 1, diagnostics: [], node: match, tokens: [] }
+		return { consumed: match.length, diagnostics: [], node: match, tokens: [] }
 	}
 }
 

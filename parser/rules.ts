@@ -33,8 +33,11 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 			if (!res) return null
 
 			consumed += res.consumed
+
+			nodes.push(res.node)
 			tokens.push(...res.tokens)
 			diagnostics.push(...res.diagnostics)
+
 			text = text.slice(res.consumed)
 			start += consumed
 		}
@@ -56,11 +59,16 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 			if (!res) break
 
 			consumed += res.consumed
+
+			nodes.push(res.node)
 			tokens.push(...res.tokens)
 			diagnostics.push(...res.diagnostics)
+
 			text = text.slice(res.consumed)
 			start += consumed
 		}
+
+		if (!nodes.length) return null
 
 		return { consumed, diagnostics, node: nodes, tokens }
 	}
@@ -70,12 +78,35 @@ export function any<T>(rules: Rule<T>[]): Rule<T> {
 	return (text, start) => {
 		for (const rule of rules) {
 			const res = rule(text, start)
-			if (!res) return null
-
-			return res
+			if (res) return res
 		}
 
 		return null
+	}
+}
+
+export function optional<T>(rule: Rule<T>): Rule<T | null> {
+	return (text, start) => {
+		const res = rule(text, start)
+		if (res) return res
+
+		return { consumed: 0, diagnostics: [], node: null, tokens: [] }
+	}
+}
+
+export function token(name: string, rule: Rule<unknown>): Rule<string> {
+	return (text, start) => {
+		const res = rule(text, start)
+		if (!res) return null
+
+		const end = start + res.consumed
+		const content = text.slice(0, res.consumed)
+
+		return {
+			...res,
+			node: content,
+			tokens: [...res.tokens, { name, span: { start, end } }],
+		}
 	}
 }
 
