@@ -1,0 +1,65 @@
+// deps.dk
+let @pub @import @version('1.2.3') reason = 'github.com/jikno-team/reason'
+use @pub @import @version('1.2.3') 'github.com/jikno-team/reason' as reason
+
+// main.dk
+use imports as { reason }
+let reason = imports.reason
+
+let Person =>
+	let @error InvalidName()
+
+	let @pub @type Eater =>
+		let @arg food #Food
+		let @pub default #unknown
+
+	let @pub @type @extends(#B) A
+
+	let @param name #str
+	let @param age #num
+	let @param onEat #Eater?
+
+	let @pub sayHello =>
+		print("Hello, ${name}")
+
+	let @pub default = name
+
+	throw InvalidName()
+
+let elijah = Person(name: "Elijah", age: 10)
+print(elijah) // Elijah
+
+use Person(
+	name: "Elijah",
+	age: 30,
+	#A: #unknown,
+	onEat: let =>
+		let @arg food
+
+		print('Elijah just ate ${food}')
+)
+	as { sayHello as sayHelloElijah }
+
+print(sayHelloElijah) // prints "Hello, Elijah"
+
+use #num 44 as number
+let #num number = 44
+
+let name = 
+	if num == #Person.age -> 'Number is 40'
+?
+
+// Statements
+use
+let
+
+// Expressions
+let
+additive
+multiplicative
+comparison
+conditional
+parenthetical
+numLiteral
+stringLiteral
+booleanLiteral
