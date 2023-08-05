@@ -58,6 +58,10 @@ export function Whitespace(): Rule<string> {
 	return Match(/\s+/)
 }
 
+export function InlineWhitespace(): Rule<string> {
+	return Match(/[ \t]+/)
+}
+
 export function Id(): Rule<string> {
 	return Match(/[a-z_$][0-9a-z_$]*/i)
 }

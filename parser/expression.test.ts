@@ -77,3 +77,14 @@ Deno.test('AdditiveExpression parses multiple additions together', () => {
 		span: { start: 0, end: 18 },
 	})
 })
+
+Deno.test('MultiplicativeExpression parses', () => {
+	const code = '3 * 4 / 21'
+
+	asserts.assertEquals(parse(code), {
+		$: 'DivisionExpression',
+		left: { $: 'NumberLiteral', content: 3, span: Ast.getSpan(0, 1) },
+		right: { $: 'NumberLiteral', content: 4, span: Ast.getSpan(4, 5) },
+		span: Ast.getSpan(0, 5),
+	})
+})
