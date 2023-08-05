@@ -1,5 +1,6 @@
 import { Diagnostic, Rule, Token } from './base.ts'
 import { Ast } from './deps.ts'
+import { OmitManager } from './omits.ts'
 
 export function seq<A>(rules: [Rule<A>]): Rule<[A]>
 export function seq<A, B>(rules: [Rule<A>, Rule<B>]): Rule<[A, B]>
@@ -21,7 +22,7 @@ export function seq<A, B, C, D, E, F, G, H, I, J>(
 ): Rule<[A, B, C, D, E, F, G, H, I, J]>
 
 export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
-	return (text: string, start: number) => {
+	return (text: string, start: number, omits) => {
 		const diagnostics: Diagnostic[] = []
 		const tokens: Token[] = []
 		const nodes: unknown[] = []
@@ -29,7 +30,7 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 		let consumed = 0
 
 		for (const rule of rules) {
-			const res = rule(text, start)
+			const res = rule(text, start, omits)
 			if (!res) return null
 
 			consumed += res.consumed
@@ -39,7 +40,7 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 			diagnostics.push(...res.diagnostics)
 
 			text = text.slice(res.consumed)
-			start += consumed
+			start += res.consumed
 		}
 
 		return { consumed, diagnostics, tokens, node: nodes }
@@ -47,7 +48,7 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 }
 
 export function repeat<T>(rule: Rule<T>): Rule<T[]> {
-	return (text: string, start: number) => {
+	return (text, start, omits) => {
 		const diagnostics: Diagnostic[] = []
 		const tokens: Token[] = []
 		const nodes: T[] = []
@@ -55,7 +56,7 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 		let consumed = 0
 
 		while (text.length) {
-			const res = rule(text, start)
+			const res = rule(text, start, omits)
 			if (!res) break
 
 			consumed += res.consumed
@@ -65,7 +66,7 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 			diagnostics.push(...res.diagnostics)
 
 			text = text.slice(res.consumed)
-			start += consumed
+			start += res.consumed
 		}
 
 		if (!nodes.length) return null
@@ -75,9 +76,9 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 }
 
 export function any<T>(rules: Rule<T>[]): Rule<T> {
-	return (text, start) => {
+	return (text, start, omits) => {
 		for (const rule of rules) {
-			const res = rule(text, start)
+			const res = rule(text, start, omits)
 			if (res) return res
 		}
 
@@ -86,8 +87,8 @@ export function any<T>(rules: Rule<T>[]): Rule<T> {
 }
 
 export function optional<T>(rule: Rule<T>): Rule<T | null> {
-	return (text, start) => {
-		const res = rule(text, start)
+	return (text, start, omits) => {
+		const res = rule(text, start, omits)
 		if (res) return res
 
 		return { consumed: 0, diagnostics: [], node: null, tokens: [] }
@@ -95,8 +96,8 @@ export function optional<T>(rule: Rule<T>): Rule<T | null> {
 }
 
 export function token<T>(name: string, rule: Rule<T>): Rule<T> {
-	return (text, start) => {
-		const res = rule(text, start)
+	return (text, start, omits) => {
+		const res = rule(text, start, omits)
 		if (!res) return null
 
 		const end = start + res.consumed
@@ -113,12 +114,12 @@ export type Formatter<T, NT> = (params: FormatterParams<T>) => NT
 export interface FormatterParams<T> {
 	node: T
 	addDiagnostic(diagnostic: Diagnostic): void
-	getSpan(): Ast.Span
+	span: Ast.Span
 }
 
 export function format<T, NT>(rule: Rule<T>, formatter: Formatter<T, NT>): Rule<NT> {
-	return (text, start) => {
-		const res = rule(text, start)
+	return (text, start, omits) => {
+		const res = rule(text, start, omits)
 		if (!res) return null
 
 		const diagnostics: Diagnostic[] = []
@@ -126,9 +127,16 @@ export function format<T, NT>(rule: Rule<T>, formatter: Formatter<T, NT>): Rule<
 		const newNode = formatter({
 			node: res.node,
 			addDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
-			getSpan: () => ({ start, end: start + res.consumed }),
+			span: { start, end: start + res.consumed },
 		})
 
 		return { node: newNode, consumed: res.consumed, diagnostics, tokens: res.tokens }
+	}
+}
+
+export function catchState<T>(fn: (text: string, start: number, omits: OmitManager) => Rule<T>): Rule<T> {
+	return (text, start, omits) => {
+		const rule = fn(text, start, omits)
+		return rule(text, start, omits)
 	}
 }

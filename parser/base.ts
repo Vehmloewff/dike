@@ -1,4 +1,5 @@
 import { Ast } from './deps.ts'
+import { OmitManager } from './omits.ts'
 
 export interface Token {
 	span: Ast.Span
@@ -19,7 +20,7 @@ export interface ResultOk<T> {
 
 export type Result<T> = ResultOk<T> | null
 
-export type Rule<T> = (text: string, start: number) => Result<T>
+export type Rule<T> = (text: string, start: number, omitManager: OmitManager) => Result<T>
 
 export function Exact(content: string): Rule<string> {
 	return (text) => {
