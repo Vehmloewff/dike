@@ -38,3 +38,18 @@ export async function fillParseTest(args: string[]): Promise<void> {
 
 	console.log(colors.green('Filled'), basePath)
 }
+
+export async function test(modules: string[]): Promise<void> {
+	if (!modules.length) modules = ['parser']
+
+	const testFiles: string[] = []
+	const options = ['-A']
+
+	for (const module of modules) {
+		if (module === 'parser') testFiles.push('parser/test/mod.ts')
+	}
+
+	if (dtils.getEnv() === 'dev') options.push('--watch')
+
+	await dtils.sh(`deno test ${options.join(' ')} ${testFiles.join(' ')}`)
+}
