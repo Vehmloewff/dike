@@ -41,6 +41,7 @@ export function Expression(options: ExpressionOptions = {}): Rule<Ast.Expression
 		if (canParse('BooleanLiteral')) rules.push(BooleanLiteral())
 		if (canParse('NumberLiteral')) rules.push(NumberLiteral())
 		if (canParse('StringLiteral')) rules.push(StringLiteral())
+		if (canParse('NullLiteral')) rules.push(NullLiteral())
 
 		return any(rules)
 	})

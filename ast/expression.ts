@@ -5,6 +5,7 @@ export type Expression =
 	| NumberLiteral
 	| StringLiteral
 	| BooleanLiteral
+	| NullLiteral
 
 export type BinaryExpression =
 	| AdditionExpression
