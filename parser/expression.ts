@@ -113,3 +113,9 @@ export function ConditionalExpression(): Rule<ConditionalExpression> {
 		operators: ['&&', '||'],
 	})
 }
+
+export function NullLiteral(): Rule<Ast.NullLiteral> {
+	return format(token('constant.language', Exact('null')), ({ span }): Ast.NullLiteral => {
+		return { $: 'NullLiteral', span }
+	})
+}
