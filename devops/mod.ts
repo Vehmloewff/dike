@@ -46,7 +46,7 @@ export async function test(modules: string[]): Promise<void> {
 	const options = ['-A']
 
 	for (const module of modules) {
-		if (module === 'parser') testFiles.push('parser/test/mod.ts')
+		if (module === 'parser') testFiles.push('parser/test/mod.ts', 'parser/*.test.ts')
 	}
 
 	if (dtils.getEnv() === 'dev') options.push('--watch')

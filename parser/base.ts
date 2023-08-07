@@ -13,6 +13,7 @@ export interface Diagnostic {
 
 export interface Comment {
 	text: string
+	span: Ast.Span
 }
 
 export interface ResultOk<T> {
