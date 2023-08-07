@@ -1,5 +1,14 @@
+// a normal addition expression
 3 + 4
+
+// a large segment of operators meshed together
 3 + 4 + 5 - 6 + 10
+
+// no space before the operator
 3- 3
+
+// plus a negative expression
 4+-4
-1 - 2
+
+// minus a negative number
+1 --2
