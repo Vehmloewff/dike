@@ -1,1 +1,23 @@
-[]
+[
+	{
+		"message": "Missing second term in MultiplicationExpression",
+		"span": {
+			"start": 76,
+			"end": 78
+		}
+	},
+	{
+		"message": "Missing second term in DivisionExpression",
+		"span": {
+			"start": 79,
+			"end": 81
+		}
+	},
+	{
+		"message": "Missing second term in MultiplicationExpression",
+		"span": {
+			"start": 82,
+			"end": 130
+		}
+	}
+]

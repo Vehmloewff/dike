@@ -238,5 +238,135 @@
 			"start": 46,
 			"end": 55
 		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 56,
+			"end": 56
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 57,
+			"end": 145
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "GreaterThanExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 3,
+				"span": {
+					"start": 146,
+					"end": 147
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 148,
+					"end": 148
+				}
+			},
+			"span": {
+				"start": 146,
+				"end": 148
+			}
+		},
+		"span": {
+			"start": 146,
+			"end": 148
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "GreaterThanOrEqualToExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 5,
+				"span": {
+					"start": 149,
+					"end": 150
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 152,
+					"end": 152
+				}
+			},
+			"span": {
+				"start": 149,
+				"end": 152
+			}
+		},
+		"span": {
+			"start": 149,
+			"end": 152
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "LessThanExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 6,
+				"span": {
+					"start": 153,
+					"end": 154
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 155,
+					"end": 155
+				}
+			},
+			"span": {
+				"start": 153,
+				"end": 155
+			}
+		},
+		"span": {
+			"start": 153,
+			"end": 155
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "LessThanOrEqualToExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 4,
+				"span": {
+					"start": 156,
+					"end": 157
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 159,
+					"end": 159
+				}
+			},
+			"span": {
+				"start": 156,
+				"end": 159
+			}
+		},
+		"span": {
+			"start": 156,
+			"end": 159
+		}
 	}
 ]

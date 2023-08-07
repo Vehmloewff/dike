@@ -163,5 +163,106 @@
 			"start": 15,
 			"end": 34
 		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 35,
+			"end": 35
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 36,
+			"end": 75
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "MultiplicationExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 8,
+				"span": {
+					"start": 76,
+					"end": 77
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 78,
+					"end": 78
+				}
+			},
+			"span": {
+				"start": 76,
+				"end": 78
+			}
+		},
+		"span": {
+			"start": 76,
+			"end": 78
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "DivisionExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 5,
+				"span": {
+					"start": 79,
+					"end": 80
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 81,
+					"end": 81
+				}
+			},
+			"span": {
+				"start": 79,
+				"end": 81
+			}
+		},
+		"span": {
+			"start": 79,
+			"end": 81
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "MultiplicationExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 2,
+				"span": {
+					"start": 82,
+					"end": 84
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 130,
+					"end": 130
+				}
+			},
+			"span": {
+				"start": 82,
+				"end": 130
+			}
+		},
+		"span": {
+			"start": 82,
+			"end": 130
+		}
 	}
 ]

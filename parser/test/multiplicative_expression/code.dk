@@ -2,3 +2,8 @@
 4/2
 1*-2
 1 * 4 / 5 * 10 / 40
+
+// should parse without the second term
+8*
+5/
+2.  * // should place null after this whitespace

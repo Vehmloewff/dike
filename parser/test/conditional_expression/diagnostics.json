@@ -1,1 +1,16 @@
-[]
+[
+	{
+		"message": "Missing second term in OrExpression",
+		"span": {
+			"start": 123,
+			"end": 126
+		}
+	},
+	{
+		"message": "Missing second term in AndExpression",
+		"span": {
+			"start": 127,
+			"end": 207
+		}
+	}
+]

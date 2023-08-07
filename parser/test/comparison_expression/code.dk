@@ -4,3 +4,9 @@
 4 < 5 <= 6 < 7
 3 >= 4
 true > 10
+
+// without the second term should still parse... should just throw a diagnostic for each
+3>
+5>=
+6<
+4<=

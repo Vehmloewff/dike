@@ -256,5 +256,91 @@
 			"start": 208,
 			"end": 213
 		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 214,
+			"end": 214
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 215,
+			"end": 259
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "AdditionExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 1,
+				"span": {
+					"start": 260,
+					"end": 261
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 263,
+					"end": 263
+				}
+			},
+			"span": {
+				"start": 260,
+				"end": 263
+			}
+		},
+		"span": {
+			"start": 260,
+			"end": 263
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 264,
+			"end": 264
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 265,
+			"end": 325
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "SubtractionExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 1,
+				"span": {
+					"start": 326,
+					"end": 327
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 333,
+					"end": 333
+				}
+			},
+			"span": {
+				"start": 326,
+				"end": 333
+			}
+		},
+		"span": {
+			"start": 326,
+			"end": 333
+		}
 	}
 ]

@@ -1,1 +1,16 @@
-[]
+[
+	{
+		"message": "Missing second term in AdditionExpression",
+		"span": {
+			"start": 260,
+			"end": 263
+		}
+	},
+	{
+		"message": "Missing second term in SubtractionExpression",
+		"span": {
+			"start": 326,
+			"end": 333
+		}
+	}
+]

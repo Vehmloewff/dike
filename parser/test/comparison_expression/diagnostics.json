@@ -1,1 +1,30 @@
-[]
+[
+	{
+		"message": "Missing second term in GreaterThanExpression",
+		"span": {
+			"start": 146,
+			"end": 148
+		}
+	},
+	{
+		"message": "Missing second term in GreaterThanOrEqualToExpression",
+		"span": {
+			"start": 149,
+			"end": 152
+		}
+	},
+	{
+		"message": "Missing second term in LessThanExpression",
+		"span": {
+			"start": 153,
+			"end": 155
+		}
+	},
+	{
+		"message": "Missing second term in LessThanOrEqualToExpression",
+		"span": {
+			"start": 156,
+			"end": 159
+		}
+	}
+]

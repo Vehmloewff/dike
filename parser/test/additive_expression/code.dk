@@ -12,3 +12,9 @@
 
 // minus a negative number
 1 --2
+
+// parse an expression without the last term
+1 +
+
+// ast should put the null at the end of the whitespace here
+1-     

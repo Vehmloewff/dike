@@ -178,5 +178,77 @@
 			"start": 45,
 			"end": 75
 		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 76,
+			"end": 76
+		}
+	},
+	{
+		"$": "EmptyStatement",
+		"span": {
+			"start": 77,
+			"end": 122
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "OrExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 4,
+				"span": {
+					"start": 123,
+					"end": 124
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 126,
+					"end": 126
+				}
+			},
+			"span": {
+				"start": 123,
+				"end": 126
+			}
+		},
+		"span": {
+			"start": 123,
+			"end": 126
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "AndExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 5,
+				"span": {
+					"start": 127,
+					"end": 128
+				}
+			},
+			"right": {
+				"$": "NullLiteral",
+				"span": {
+					"start": 207,
+					"end": 207
+				}
+			},
+			"span": {
+				"start": 127,
+				"end": 207
+			}
+		},
+		"span": {
+			"start": 127,
+			"end": 207
+		}
 	}
 ]

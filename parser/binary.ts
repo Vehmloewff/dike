@@ -10,11 +10,7 @@ export interface BuildBinaryExpressionParams<T extends Ast.BinaryExpression> {
 }
 
 export function buildBinaryExpression<T extends Ast.BinaryExpression>(params: BuildBinaryExpressionParams<T>): Rule<T> {
-	const getExpression = () =>
-		format(
-			Expression({ omit: params.types }),
-			({ node, span }) => ({ expr: node, span }),
-		)
+	const getExpression = () => Expression({ omit: params.types })
 
 	const rule = seq([
 		getExpression(),
@@ -23,7 +19,7 @@ export function buildBinaryExpression<T extends Ast.BinaryExpression>(params: Bu
 				optional(InlineWhitespace()),
 				token('keyword.operator', any(params.operators.map((operator) => Exact(operator)))),
 				optional(InlineWhitespace()),
-				getExpression(),
+				optional(getExpression()),
 			]),
 		),
 	])
@@ -33,25 +29,41 @@ export function buildBinaryExpression<T extends Ast.BinaryExpression>(params: Bu
 		return params.types[operatorIndex]
 	}
 
-	return format(rule, ({ node }): T => {
+	return format(rule, ({ node, addDiagnostic }): T => {
 		const [firstExpression, repeats] = node
 
-		const [_, initialOperator, __, secondExpression] = repeats[0]
+		const [beforeOperatorWhitespace, initialOperator, afterOperatorWhitespace, secondExpression] = repeats[0]
+
+		const closestIndex = firstExpression.span.end + (beforeOperatorWhitespace?.length || 0) + initialOperator.length +
+			(afterOperatorWhitespace?.length || 0)
+
+		const filledSecondExpression: Ast.Expression = secondExpression ||
+			{ $: 'NullLiteral', span: { start: closestIndex, end: closestIndex } }
 
 		let additive: T = {
 			$: getTypeFromOperator(initialOperator),
-			left: firstExpression.expr,
-			right: secondExpression.expr,
-			span: Ast.mergeSpans(firstExpression.span, secondExpression.span),
+			left: firstExpression,
+			right: filledSecondExpression,
+			span: Ast.mergeSpans(firstExpression.span, filledSecondExpression.span),
 		} as T
 
+		if (!secondExpression) addDiagnostic({ message: `Missing second term in ${additive.$}`, span: additive.span })
+
 		for (const [_, newOperator, __, newExpression] of repeats.slice(1)) {
+			const newClosestIndex = firstExpression.span.end + (beforeOperatorWhitespace?.length || 0) + initialOperator.length +
+				(afterOperatorWhitespace?.length || 0)
+
+			const filledNewExpression: Ast.Expression = newExpression ||
+				{ $: 'NullLiteral', span: { start: newClosestIndex, end: newClosestIndex } }
+
 			additive = {
 				$: getTypeFromOperator(newOperator),
 				left: additive,
-				right: newExpression.expr,
-				span: Ast.mergeSpans(additive.span, newExpression.span),
+				right: filledNewExpression,
+				span: Ast.mergeSpans(additive.span, filledNewExpression.span),
 			} as T
+
+			if (!newExpression) addDiagnostic({ message: `Missing second term in ${additive.$}`, span: additive.span })
 		}
 
 		return additive
