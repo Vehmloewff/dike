@@ -44,6 +44,7 @@ export function Chars(chars: string[]): Rule<string> {
 export function Match(regex: RegExp): Rule<string> {
 	return (text) => {
 		const res = text.match(regex)
+
 		if (!res) return null
 		if (!res.length) return null
 

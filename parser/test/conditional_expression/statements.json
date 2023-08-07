@@ -1,0 +1,182 @@
+[
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "OrExpression",
+			"left": {
+				"$": "BooleanLiteral",
+				"content": true,
+				"span": {
+					"start": 0,
+					"end": 4
+				}
+			},
+			"right": {
+				"$": "BooleanLiteral",
+				"content": false,
+				"span": {
+					"start": 8,
+					"end": 13
+				}
+			},
+			"span": {
+				"start": 0,
+				"end": 13
+			}
+		},
+		"span": {
+			"start": 0,
+			"end": 13
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "OrExpression",
+			"left": {
+				"$": "BooleanLiteral",
+				"content": true,
+				"span": {
+					"start": 14,
+					"end": 18
+				}
+			},
+			"right": {
+				"$": "BooleanLiteral",
+				"content": false,
+				"span": {
+					"start": 20,
+					"end": 25
+				}
+			},
+			"span": {
+				"start": 14,
+				"end": 25
+			}
+		},
+		"span": {
+			"start": 14,
+			"end": 25
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "AndExpression",
+			"left": {
+				"$": "BooleanLiteral",
+				"content": false,
+				"span": {
+					"start": 26,
+					"end": 31
+				}
+			},
+			"right": {
+				"$": "BooleanLiteral",
+				"content": true,
+				"span": {
+					"start": 35,
+					"end": 39
+				}
+			},
+			"span": {
+				"start": 26,
+				"end": 39
+			}
+		},
+		"span": {
+			"start": 26,
+			"end": 39
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "AndExpression",
+			"left": {
+				"$": "NumberLiteral",
+				"content": 4,
+				"span": {
+					"start": 40,
+					"end": 41
+				}
+			},
+			"right": {
+				"$": "NumberLiteral",
+				"content": 5,
+				"span": {
+					"start": 43,
+					"end": 44
+				}
+			},
+			"span": {
+				"start": 40,
+				"end": 44
+			}
+		},
+		"span": {
+			"start": 40,
+			"end": 44
+		}
+	},
+	{
+		"$": "ExpressionStatement",
+		"expression": {
+			"$": "AndExpression",
+			"left": {
+				"$": "OrExpression",
+				"left": {
+					"$": "AndExpression",
+					"left": {
+						"$": "BooleanLiteral",
+						"content": true,
+						"span": {
+							"start": 45,
+							"end": 49
+						}
+					},
+					"right": {
+						"$": "BooleanLiteral",
+						"content": false,
+						"span": {
+							"start": 53,
+							"end": 58
+						}
+					},
+					"span": {
+						"start": 45,
+						"end": 58
+					}
+				},
+				"right": {
+					"$": "BooleanLiteral",
+					"content": true,
+					"span": {
+						"start": 62,
+						"end": 66
+					}
+				},
+				"span": {
+					"start": 45,
+					"end": 66
+				}
+			},
+			"right": {
+				"$": "BooleanLiteral",
+				"content": false,
+				"span": {
+					"start": 70,
+					"end": 75
+				}
+			},
+			"span": {
+				"start": 45,
+				"end": 75
+			}
+		},
+		"span": {
+			"start": 45,
+			"end": 75
+		}
+	}
+]

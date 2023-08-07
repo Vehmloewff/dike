@@ -1,26 +1,24 @@
-import { Exact, InlineWhitespace, Rule } from './base.ts'
+import { InlineWhitespace, Match, Rule } from './base.ts'
 import { Ast } from './deps.ts'
 import { Expression } from './expression.ts'
 import { any, format, optional, repeat, seq } from './rules.ts'
 
 export function Statements(): Rule<Ast.Statement[]> {
-	// TODO allow for unnecessary indentation and spacing
-	const rule = seq([
-		optional(repeat(
-			seq([
-				Statement(),
-				Exact('\n'),
-			]),
-		)),
-		optional(Statement()),
-	])
+	// NOTE: due to the way things work, we have to be real careful with this here.
+	// Because of the way that Expression prevents infinite recursion by ignoring certain rules at certain indexes,
+	// If we let Statement() succeed, but then ask for it to succeed again, we won't get any binary expressions
+	// This is because they have all been already filtered out at that start index
+	const rule = repeat(
+		seq([
+			Statement(),
+			Match(/$|\n/),
+		]),
+	)
 
 	return format(rule, ({ node }) => {
 		const statements: Ast.Statement[] = []
-		const [repeating, lastStatement] = node
 
-		for (const [statement] of repeating || []) statements.push(statement)
-		if (lastStatement) statements.push(lastStatement)
+		for (const [statement] of node) statements.push(statement)
 
 		return statements
 	})

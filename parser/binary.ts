@@ -1,4 +1,4 @@
-import { Exact, Rule, Whitespace } from './base.ts'
+import { Exact, InlineWhitespace, Rule } from './base.ts'
 import { Ast } from './deps.ts'
 import { Expression } from './expression.ts'
 import { any, format, optional, repeat, seq, token } from './rules.ts'
@@ -9,22 +9,20 @@ export interface BuildBinaryExpressionParams<T extends Ast.BinaryExpression> {
 }
 
 export function buildBinaryExpression<T extends Ast.BinaryExpression>(params: BuildBinaryExpressionParams<T>): Rule<T> {
-	const getExpression = () => Expression({ omit: params.types })
+	const getExpression = () =>
+		format(
+			Expression({ omit: params.types }),
+			({ node, span }) => ({ expr: node, span }),
+		)
 
 	const rule = seq([
-		format(
-			getExpression(),
-			({ node, span }) => ({ expr: node, span }),
-		),
+		getExpression(),
 		repeat(
 			seq([
-				optional(Whitespace()),
+				optional(InlineWhitespace()),
 				token('keyword.operator', any(params.operators.map((operator) => Exact(operator)))),
-				optional(Whitespace()),
-				format(
-					getExpression(),
-					({ node, span }) => ({ expr: node, span }),
-				),
+				optional(InlineWhitespace()),
+				getExpression(),
 			]),
 		),
 	])

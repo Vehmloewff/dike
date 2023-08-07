@@ -9,7 +9,7 @@ for await (const entry of Deno.readDir('parser/test')) {
 	const code = await dtils.readText(pathUtils.join(base, 'code.dk'))
 	if (!code) throw new Error(`Expected ${pathUtils.join(base, 'code.dk')} to be a file`)
 
-	let result: parser.ParseResult
+	let result: parser.ParseResult = { diagnostics: [], statements: [], tokens: [] }
 
 	Deno.test(`${name} parses`, () => {
 		result = parser.parse(code)

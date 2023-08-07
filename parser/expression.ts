@@ -48,7 +48,7 @@ export function Expression(options: ExpressionOptions = {}): Rule<Ast.Expression
 }
 
 export function NumberLiteral(): Rule<Ast.NumberLiteral> {
-	const rule = token('constant.numeric', Match(/\.\d+|\d+\.?\d*/))
+	const rule = token('constant.numeric', Match(/\-?(\.\d+|\d+\.?\d*)/))
 
 	return format(rule, ({ node, span }): Ast.NumberLiteral => {
 		const int = parseFloat(node)
@@ -101,8 +101,8 @@ export type ComparisonExpression =
 
 export function ComparisonExpression(): Rule<ComparisonExpression> {
 	return buildBinaryExpression({
-		types: ['GreaterThanExpression', 'LessThanExpression', 'GreaterThanOrEqualToExpression', 'LessThanOrEqualToExpression'],
-		operators: ['>', '<', '>=', '<='],
+		types: ['GreaterThanOrEqualToExpression', 'LessThanOrEqualToExpression', 'GreaterThanExpression', 'LessThanExpression'],
+		operators: ['>=', '<=', '>', '<'],
 	})
 }
 

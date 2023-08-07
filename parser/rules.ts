@@ -49,6 +49,8 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 
 export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 	return (text, start, omits) => {
+		// ;`index=${start}; rule=repeat`
+
 		const diagnostics: Diagnostic[] = []
 		const tokens: Token[] = []
 		const nodes: T[] = []
