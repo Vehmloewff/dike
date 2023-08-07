@@ -11,11 +11,16 @@ export interface Diagnostic {
 	message: string
 }
 
+export interface Comment {
+	text: string
+}
+
 export interface ResultOk<T> {
 	node: T
 	consumed: number
 	tokens: Token[]
 	diagnostics: Diagnostic[]
+	comments: Comment[]
 }
 
 export type Result<T> = ResultOk<T> | null
@@ -26,7 +31,7 @@ export function Exact(content: string): Rule<string> {
 	return (text) => {
 		if (!text.startsWith(content)) return null
 
-		return { consumed: content.length, diagnostics: [], tokens: [], node: content }
+		return { consumed: content.length, diagnostics: [], tokens: [], node: content, comments: [] }
 	}
 }
 
@@ -37,7 +42,7 @@ export function Chars(chars: string[]): Rule<string> {
 		const nextChar = text.charAt(0)
 		if (!chars.includes(nextChar)) return null
 
-		return { consumed: 1, diagnostics: [], node: nextChar, tokens: [] }
+		return { consumed: 1, diagnostics: [], node: nextChar, tokens: [], comments: [] }
 	}
 }
 
@@ -51,16 +56,8 @@ export function Match(regex: RegExp): Rule<string> {
 		const match = res[0]
 		if (!text.startsWith(match)) return null
 
-		return { consumed: match.length, diagnostics: [], node: match, tokens: [] }
+		return { consumed: match.length, diagnostics: [], node: match, tokens: [], comments: [] }
 	}
-}
-
-export function Whitespace(): Rule<string> {
-	return Match(/\s+/)
-}
-
-export function InlineWhitespace(): Rule<string> {
-	return Match(/[ \t]+/)
 }
 
 export function Id(): Rule<string> {

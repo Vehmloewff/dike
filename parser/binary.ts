@@ -1,7 +1,8 @@
-import { Exact, InlineWhitespace, Rule } from './base.ts'
+import { Exact, Rule } from './base.ts'
 import { Ast } from './deps.ts'
 import { Expression } from './expression.ts'
 import { any, format, optional, repeat, seq, token } from './rules.ts'
+import { InlineWhitespace } from './whitespace.ts'
 
 export interface BuildBinaryExpressionParams<T extends Ast.BinaryExpression> {
 	types: T['$'][]

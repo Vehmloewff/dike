@@ -1,7 +1,8 @@
-import { InlineWhitespace, Match, Rule } from './base.ts'
+import { Match, Rule } from './base.ts'
 import { Ast } from './deps.ts'
 import { Expression } from './expression.ts'
 import { any, format, optional, repeat, seq } from './rules.ts'
+import { InlineWhitespace } from './whitespace.ts'
 
 export function Statements(): Rule<Ast.Statement[]> {
 	// NOTE: due to the way things work, we have to be real careful with this here.
@@ -11,6 +12,7 @@ export function Statements(): Rule<Ast.Statement[]> {
 	const rule = repeat(
 		seq([
 			Statement(),
+			optional(InlineWhitespace()),
 			Match(/$|\n/),
 		]),
 	)

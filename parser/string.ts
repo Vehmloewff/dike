@@ -58,6 +58,7 @@ function validString(start: number, consumed: number, content: string): ResultOk
 		diagnostics: [],
 		node: { $: 'StringLiteral', content, span },
 		tokens: [{ name: 'string.quoted', span }],
+		comments: [],
 	}
 }
 
@@ -69,5 +70,6 @@ function unterminatedString(start: number, consumed: number, content: string): R
 		diagnostics: [{ span, message: 'Unterminated string literal' }],
 		node: { $: 'StringLiteral', content, span },
 		tokens: [{ name: 'string.quoted', span }],
+		comments: [],
 	}
 }

@@ -1,4 +1,4 @@
-import { Diagnostic, Rule, Token } from './base.ts'
+import { Comment, Diagnostic, Rule, Token } from './base.ts'
 import { Ast } from './deps.ts'
 import { OmitManager } from './omits.ts'
 
@@ -43,17 +43,16 @@ export function seq(rules: Rule<unknown>[]): Rule<unknown[]> {
 			start += res.consumed
 		}
 
-		return { consumed, diagnostics, tokens, node: nodes }
+		return { consumed, diagnostics, tokens, node: nodes, comments: [] }
 	}
 }
 
 export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 	return (text, start, omits) => {
-		// ;`index=${start}; rule=repeat`
-
 		const diagnostics: Diagnostic[] = []
 		const tokens: Token[] = []
 		const nodes: T[] = []
+		const comments: Comment[] = []
 
 		let consumed = 0
 
@@ -66,6 +65,7 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 			nodes.push(res.node)
 			tokens.push(...res.tokens)
 			diagnostics.push(...res.diagnostics)
+			comments.push(...res.comments)
 
 			text = text.slice(res.consumed)
 			start += res.consumed
@@ -73,7 +73,7 @@ export function repeat<T>(rule: Rule<T>): Rule<T[]> {
 
 		if (!nodes.length) return null
 
-		return { consumed, diagnostics, node: nodes, tokens }
+		return { consumed, diagnostics, node: nodes, tokens, comments }
 	}
 }
 
@@ -93,7 +93,13 @@ export function optional<T>(rule: Rule<T>): Rule<T | null> {
 		const res = rule(text, start, omits)
 		if (res) return res
 
-		return { consumed: 0, diagnostics: [], node: null, tokens: [] }
+		return {
+			consumed: 0,
+			diagnostics: [],
+			node: null,
+			tokens: [],
+			comments: [],
+		}
 	}
 }
 
@@ -124,15 +130,19 @@ export function format<T, NT>(rule: Rule<T>, formatter: Formatter<T, NT>): Rule<
 		const res = rule(text, start, omits)
 		if (!res) return null
 
-		const diagnostics: Diagnostic[] = [...res.diagnostics]
+		const newDiagnostics: Diagnostic[] = []
 
 		const newNode = formatter({
 			node: res.node,
-			addDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
+			addDiagnostic: (diagnostic) => newDiagnostics.push(diagnostic),
 			span: { start, end: start + res.consumed },
 		})
 
-		return { node: newNode, consumed: res.consumed, diagnostics, tokens: res.tokens }
+		return {
+			...res,
+			node: newNode,
+			diagnostics: [...res.diagnostics, ...newDiagnostics],
+		}
 	}
 }
 
