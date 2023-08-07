@@ -15,7 +15,7 @@ Deno.test('Whitespace captures whitespace', () => {
 	})
 })
 
-Deno.test('Whitespace\'s params.omitNewline works', () => {
+Deno.test('Whitespace params.omitNewline works', () => {
 	const rule = Whitespace({ omitNewline: true })
 	const res = rule(' \t\n4', 0, new OmitManager())
 
