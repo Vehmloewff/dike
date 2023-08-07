@@ -1,0 +1,16 @@
+[
+	{
+		"span": {
+			"start": 19,
+			"end": 32
+		},
+		"message": "Unterminated string literal"
+	},
+	{
+		"span": {
+			"start": 79,
+			"end": 94
+		},
+		"message": "Unterminated string literal"
+	}
+]

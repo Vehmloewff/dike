@@ -124,7 +124,7 @@ export function format<T, NT>(rule: Rule<T>, formatter: Formatter<T, NT>): Rule<
 		const res = rule(text, start, omits)
 		if (!res) return null
 
-		const diagnostics: Diagnostic[] = []
+		const diagnostics: Diagnostic[] = [...res.diagnostics]
 
 		const newNode = formatter({
 			node: res.node,

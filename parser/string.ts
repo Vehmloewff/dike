@@ -1,4 +1,6 @@
-import { Rule } from './base.ts'
+import { Span } from '../ast/base.ts'
+import { NullLiteral, StringLiteral } from '../ast/expression.ts'
+import { ResultOk, Rule } from './base.ts'
 
 type StringType = 'double' | 'single' | 'backtick'
 
@@ -10,8 +12,8 @@ function getQuoteType(char: string): StringType | null {
 	return null
 }
 
-export function MatchString(): Rule<string> {
-	return (text) => {
+export function MatchString(): Rule<StringLiteral | NullLiteral> {
+	return (text, start) => {
 		if (!text.length) return null
 
 		const stringType = getQuoteType(text[0])
@@ -35,11 +37,37 @@ export function MatchString(): Rule<string> {
 				continue
 			}
 
-			if (getQuoteType(char) === stringType) return { consumed, diagnostics: [], node: stringSoFar, tokens: [] }
+			if (getQuoteType(char) === stringType) return validString(start, consumed, stringSoFar)
+			if (char === '\n') {
+				consumed-- // We don't want to consume the newline here
+				return unterminatedString(start, consumed, stringSoFar)
+			}
 
 			stringSoFar += char
 		}
 
-		return null
+		return unterminatedString(start, consumed, stringSoFar)
+	}
+}
+
+function validString(start: number, consumed: number, content: string): ResultOk<StringLiteral> {
+	const span: Span = { start, end: start + consumed }
+
+	return {
+		consumed,
+		diagnostics: [],
+		node: { $: 'StringLiteral', content, span },
+		tokens: [{ name: 'string.quoted', span }],
+	}
+}
+
+function unterminatedString(start: number, consumed: number, content: string): ResultOk<StringLiteral> {
+	const span: Span = { start, end: start + consumed }
+
+	return {
+		consumed,
+		diagnostics: [{ span, message: 'Unterminated string literal' }],
+		node: { $: 'StringLiteral', content, span },
+		tokens: [{ name: 'string.quoted', span }],
 	}
 }

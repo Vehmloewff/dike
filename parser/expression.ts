@@ -67,12 +67,8 @@ export function BooleanLiteral(): Rule<Ast.BooleanLiteral> {
 	})
 }
 
-export function StringLiteral(): Rule<Ast.StringLiteral> {
-	const rule = token('strings.quoted', MatchString())
-
-	return format(rule, ({ node, span }): Ast.StringLiteral => {
-		return { $: 'StringLiteral', content: node, span }
-	})
+export function StringLiteral(): Rule<Ast.StringLiteral | Ast.NullLiteral> {
+	return MatchString()
 }
 
 export type AdditiveExpression = Ast.AdditionExpression | Ast.SubtractionExpression
