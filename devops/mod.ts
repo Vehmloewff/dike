@@ -1,4 +1,4 @@
-import { colors, dtils, parser, pathUtils } from './deps.ts'
+import { astTranslator, colors, dtils, parser, pathUtils } from './deps.ts'
 
 export async function addParseTest(args: string[]): Promise<void> {
 	const [name, content] = args
@@ -52,4 +52,10 @@ export async function test(modules: string[]): Promise<void> {
 	if (dtils.getEnv() === 'dev') options.push('--watch')
 
 	await dtils.sh(`deno test ${options.join(' ')} ${testFiles.join(' ')}`)
+}
+
+export async function translateAst(): Promise<void> {
+	const rustCode = await astTranslator.translateAst({ tsEntry: 'ast/mod.ts' })
+
+	dtils.writeText('rust_ast/src/lib.rs', rustCode)
 }
