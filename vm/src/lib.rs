@@ -1,10 +1,8 @@
-pub mod channel;
 pub mod instruction;
 pub mod instruction_graph;
 pub mod instruction_sweep;
 pub mod math;
 pub mod memory;
-pub mod scope;
 pub mod stack;
 pub mod value;
 
