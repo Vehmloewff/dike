@@ -1,0 +1,96 @@
+let getSeq =>
+	let @arg length #num
+
+	let fibonacci =>
+		let @arg n #num
+
+		return if n <= 0 -> 0
+		return if n == 1 -> 1
+		
+		return fibonacci::(n - 1) + fibonacci::(n - 2)
+
+	let seq = length
+		.intoEmptyStream::
+		.map:: =>
+			let @param index
+			return fibonacci::i
+
+getSeq::20
+
+let whatever ->
+	let foo = 45
+
+	let getRaster =>
+		print::'Hello, World!'
+
+		let bobby =>
+			print::foo
+
+		give bobby
+
+	give getRaster::
+
+whatever::
+
+// When a sweep is started, all it's inherited variables will be on the stack from in order. For example, if an inherit is
+// { 0: [1, 2], 11: [4, 8] }, the stack will look like this:
+// 
+//     [ 1 0, 2 0, 4 11, 8 11 ]
+//
+// A sweep is expected to consume all inherited items and params.
+// Then, after that, all the params are listed in order. When a sweep finishes, it is expected to leave whatever it returns on the stack.
+
+[len=2, inherit={}]
+0: [
+	// At the beginning here, the two variables that are native to this sweep, 0 & 1, are allocated and given 1 reference.
+
+	// Define `print` builtin
+	...
+	Ref 0 // Puts nothing on the stack, simply registers a reference to 0 [references (0) 1]
+	Write 0 // Writes 0
+
+	// let whatever ->
+	...
+
+	// whatever::
+	...
+
+	// A the end of the sweep, the two native variables are dereferenced. If the references are 0, the memory is freed
+]
+
+[len=2; inherit={ 0: [0] }]
+1: [
+	// let foo = 45
+	Load num:45
+	Write 0
+
+	// let getRaster => ...
+	Load vec
+	Load sp:2 // sweep pointer 2
+	Push
+	Focus 0 // `print`. [references (0 0) 2]
+	Push
+	Read 0 // `foo`. [references (0) 1]
+	Push
+	Write 1 // `getRaster`
+
+	// give getRaster (getRaster is loaded onto the stack)
+	Read 1 // [reference (1) 1]
+]
+
+[len=1; inherit={ 0: [0], 1: [0] }]
+2: [
+	// print::"Hello, World"
+	Load str:"Hello, World"
+	Focus 0 // brings stack item 0 (the reference to `print`) to the end of the stack
+	GoTo
+	Pop // pops 
+
+	// let bobby =>
+	Load vec
+	Load sp:3 // sweep pointer 3
+	Push
+	Load 
+
+	Free 0
+]

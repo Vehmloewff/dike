@@ -55,7 +55,12 @@ export async function test(modules: string[]): Promise<void> {
 }
 
 export async function translateAst(): Promise<void> {
-	const rustCode = await astTranslator.translateAst({ tsEntry: 'ast/mod.ts' })
+	const newTypes = await astTranslator.translateAst({ tsEntry: 'ast/mod.ts' })
 
-	dtils.writeText('rust_ast/src/lib.rs', rustCode)
+	const divider = '\n\n// ==== Impl ====\n\n'
+	const libRs = await dtils.readText('rust_ast/src/lib.rs')
+	const [_, impl] = libRs.split(divider)
+
+	const newLibRs = `${newTypes}${divider}${impl || ''}`
+	dtils.writeText('rust_ast/src/lib.rs', newLibRs)
 }

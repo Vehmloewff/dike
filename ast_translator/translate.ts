@@ -37,7 +37,7 @@ export function translateTypeAlias(def: docTypes.TypeAliasDef): EnumItem[] {
 
 	for (const type of union) {
 		if (type.kind === 'literal' && type.literal.kind === 'string') items.push({ name: type.literal.string, child: null })
-		else if (type.kind === 'typeRef') items.push({ name: type.typeRef.typeName, child: type.typeRef.typeName })
+		else if (type.kind === 'typeRef') items.push({ name: type.typeRef.typeName, child: `Box<${type.typeRef.typeName}>` })
 	}
 
 	return items
