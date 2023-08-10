@@ -16,7 +16,7 @@ impl Stack<'_> {
         value
     }
 
-    /// Pop an item off the stack. It is dangerous because ff the value is a reference, it will NOT be dereferenced,
+    /// Pop an item off the stack. It is dangerous because if the value is a reference, it will NOT be dereferenced,
     /// which could lead to memory leaks.
     pub fn dangerous_pop(&self) -> Value {
         self.stack.borrow_mut().pop().unwrap()
@@ -25,6 +25,18 @@ impl Stack<'_> {
     /// Push a new value onto the stack
     pub fn push(&self, value: Value) {
         self.stack.borrow_mut().push(value)
+    }
+
+    /// Remove an item from the stack at `index`, shifting all elements after it to the left. It
+    /// is dangerous because, if the value is a reference, it will NOT be dereferenced, which could
+    /// load to a potential memory leak
+    pub fn dangerous_remove(&self, index: usize) -> Value {
+        self.stack.borrow_mut().remove(index)
+    }
+
+    /// Gets the length of the stack
+    pub fn get_length(&self) -> usize {
+        self.stack.borrow().len()
     }
 }
 

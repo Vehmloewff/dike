@@ -1,8 +1,8 @@
 pub mod instruction;
 pub mod instruction_graph;
 pub mod instruction_sweep;
-pub mod math;
 pub mod memory;
+pub mod number;
 pub mod stack;
 pub mod value;
 
