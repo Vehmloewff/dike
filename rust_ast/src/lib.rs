@@ -143,9 +143,3 @@ pub struct BooleanLiteral {
 pub struct NullLiteral {
     pub span: Span,
 }
-
-// ==== Impl ====
-
-impl Span {
-    fn get_location() {}
-}

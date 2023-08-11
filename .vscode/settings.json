@@ -1,5 +1,6 @@
 {
 	"deno.enable": true,
 	"deno.lint": true,
-	"deno.unstable": true
+	"deno.unstable": true,
+	"rust-analyzer.linkedProjects": ["vm/Cargo.toml", "Cargo.toml"]
 }

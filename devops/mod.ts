@@ -40,18 +40,35 @@ export async function fillParseTest(args: string[]): Promise<void> {
 }
 
 export async function test(modules: string[]): Promise<void> {
-	if (!modules.length) modules = ['parser']
+	const hasModule = (module: string) => !modules.length || modules.includes(module)
 
-	const testFiles: string[] = []
-	const options = ['-A']
+	const denoTestFiles: string[] = []
+	const cargoDirectories: string[] = []
 
-	for (const module of modules) {
-		if (module === 'parser') testFiles.push('parser/test/mod.ts', 'parser/*.test.ts')
+	if (hasModule('parser')) denoTestFiles.push('parser/test/mod.ts', 'parser/*.test.ts')
+	if (hasModule('vm')) cargoDirectories.push('vm')
+
+	const getDenoCommands = () => {
+		if (!denoTestFiles.length) return []
+
+		const files = denoTestFiles.join(' ')
+
+		if (dtils.getEnv() !== 'dev') return [`deno test -A ${files}`]
+		return [`deno test -A --watch ${files}`]
 	}
 
-	if (dtils.getEnv() === 'dev') options.push('--watch')
+	const getCargoCommands = () => {
+		return cargoDirectories.map((dir) => {
+			const command = `test --manifest-path=${dir}/Cargo.toml --color=always -- --color always`
 
-	await dtils.sh(`deno test ${options.join(' ')} ${testFiles.join(' ')}`)
+			if (dtils.getEnv() === 'dev') return `cargo watch -x "${command}"`
+			return `cargo ${command}`
+		})
+	}
+
+	const commands = [...getDenoCommands(), ...getCargoCommands()]
+
+	await Promise.all(commands.map((command) => dtils.sh(command, { env: { COLOR_FORCE: '1' } })))
 }
 
 export async function translateAst(): Promise<void> {

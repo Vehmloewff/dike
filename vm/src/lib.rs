@@ -15,12 +15,16 @@ pub mod stack;
 pub mod sweep_executor;
 pub mod value;
 
+#[cfg(test)]
+mod test;
+
 pub struct VirtualMachine {
     memory: Memory,
-    graph: InstructionGraph,
+    pub graph: InstructionGraph,
 }
 
 impl VirtualMachine {
+    /// Create a new (empty) instruction graph
     pub fn new(graph: InstructionGraph) -> VirtualMachine {
         VirtualMachine {
             memory: Memory::new(),
@@ -28,9 +32,9 @@ impl VirtualMachine {
         }
     }
 
-    pub fn run(&self) {
-        let mut executor = SweepExecutor::setup(&self.memory, &self.graph, 0);
-        let stack = Stack::new(&self.memory);
+    /// Run sweep `sweep_pointer` on `stack`, giving the stack up at the end
+    pub fn run_sweep_on_stack<'a>(&self, sweep_pointer: usize, stack: Stack<'a>) -> Stack<'a> {
+        let mut executor = SweepExecutor::setup(&self.memory, &self.graph, sweep_pointer);
 
         loop {
             match executor.tick(&stack) {
@@ -39,13 +43,18 @@ impl VirtualMachine {
             }
         }
 
-        let leftover = stack.consume();
+        stack
+    }
 
-        match leftover {
-            Value::Int(num) => println!("{}", num),
-            _ => panic!("Expected int"),
-        };
+    /// Run the graph. Creates a new stack and starts executing sweep 0
+    pub fn run(&self) {
+        self.run_sweep_on_stack(0, Stack::new(&self.memory));
+    }
 
-        // println!("{}", .get_human_type());
+    /// Run the graph, returning the last value on the stack after sweep `sweep_pointer` has executed
+    pub fn get_last_value<'a>(&self, sweep_pointer: usize) -> Value {
+        let stack = self.run_sweep_on_stack(sweep_pointer, Stack::new(&self.memory));
+
+        stack.consume()
     }
 }

@@ -15,6 +15,15 @@ pub struct InstructionSweep {
 }
 
 impl InstructionSweep {
+    /// Creates a new, empty instruction sweep
+    pub fn new(local_variables_count: usize) -> InstructionSweep {
+        InstructionSweep {
+            instructions: Vec::new(),
+            local_variables_count,
+        }
+    }
+
+    /// Gets an instruction by it's address
     pub fn get_instruction(&self, index: usize) -> &Instruction {
         match self.instructions.get(index) {
             Some(instruction) => instruction,
@@ -22,7 +31,15 @@ impl InstructionSweep {
         }
     }
 
+    /// Gets the total length of the instructions
     pub fn get_length(&self) -> usize {
         self.instructions.len()
+    }
+
+    /// Adds a new instruction to the sweep
+    pub fn add(mut self, instruction: Instruction) -> InstructionSweep {
+        self.instructions.push(instruction);
+
+        self
     }
 }
