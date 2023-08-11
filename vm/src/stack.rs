@@ -8,6 +8,13 @@ pub struct Stack<'a> {
 }
 
 impl Stack<'_> {
+    pub fn new(memory: &Memory) -> Stack<'_> {
+        Stack {
+            memory,
+            stack: RefCell::new(Vec::new()),
+        }
+    }
+
     /// Consume an item from the stack. If the item contains a reference, it will be dereferenced.
     pub fn consume(&self) -> Value {
         let value = self.dangerous_pop();

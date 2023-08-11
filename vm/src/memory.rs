@@ -9,18 +9,38 @@ pub struct Memory {
 }
 
 impl Memory {
+    pub fn new() -> Memory {
+        Memory {
+            free_slots: RefCell::new(Vec::new()),
+            reference_counts: RefCell::new(Vec::new()),
+            map: RefCell::new(Vec::new()),
+        }
+    }
+
     /// Allocate space on the heap. Returns a memory address with a single tracked reference
     pub fn allocate(&self) -> usize {
-        let mem = self.map.borrow_mut();
+        let mut mem = self.map.borrow_mut();
+        let mut counts = self.reference_counts.borrow_mut();
         let free_address = self.free_slots.borrow_mut().pop();
 
         let address = match free_address {
-            Some(num) => num,
-            None => mem.len(),
-        };
+            // If it is a free_address, it will already be null
+            // The reference count, however, will be 0
+            Some(existing_address) => {
+                *counts.get_mut(existing_address).unwrap() = 1;
 
-        self.set(address, Value::Null);
-        self.track_ref(address);
+                existing_address
+            }
+            // But if it isn't we need to set it to null
+            // We also need to set the counts to 1
+            None => {
+                let length = mem.len();
+                mem.push(Value::Null);
+                counts.push(1);
+
+                length
+            }
+        };
 
         address
     }

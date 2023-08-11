@@ -21,4 +21,8 @@ impl InstructionSweep {
             _ => panic!("No instruction exists in sweep at index {}", index),
         }
     }
+
+    pub fn get_length(&self) -> usize {
+        self.instructions.len()
+    }
 }

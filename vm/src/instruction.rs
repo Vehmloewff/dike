@@ -60,10 +60,10 @@ impl Instruction {
             Instruction::LoadArray => Instruction::execute_load_array(stack),
 
             // Operations
-            Instruction::Add => Instruction::execute_add(stack),
-            Instruction::Subtract => Instruction::execute_subtract(stack),
-            Instruction::Multiply => Instruction::execute_multiply(stack),
-            Instruction::Divide => Instruction::execute_divide(stack),
+            Instruction::Add => Instruction::execute_add(stack, memory),
+            Instruction::Subtract => Instruction::execute_subtract(stack, memory),
+            Instruction::Multiply => Instruction::execute_multiply(stack, memory),
+            Instruction::Divide => Instruction::execute_divide(stack, memory),
             Instruction::Concat => Instruction::execute_concat(stack),
             Instruction::ArrayPush => Instruction::execute_array_push(stack),
             Instruction::ArrayPop => Instruction::execute_array_pop(stack),
@@ -138,11 +138,11 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_add(stack: &Stack) -> ExecuteResult {
+    fn execute_add(stack: &Stack, memory: &Memory) -> ExecuteResult {
         let right = stack.consume();
         let left = stack.consume();
 
-        let reconciled = ReconciledNumbers::reconcile(left, right);
+        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
 
         let sum = match reconciled {
             ReconciledNumbers::Int(a, b) => Value::Int(a + b),
@@ -156,11 +156,11 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_subtract(stack: &Stack) -> ExecuteResult {
+    fn execute_subtract(stack: &Stack, memory: &Memory) -> ExecuteResult {
         let right = stack.consume();
         let left = stack.consume();
 
-        let reconciled = ReconciledNumbers::reconcile(left, right);
+        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
 
         let subtrahend = match reconciled {
             ReconciledNumbers::Int(a, b) => Value::Int(a - b),
@@ -174,11 +174,11 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_multiply(stack: &Stack) -> ExecuteResult {
+    fn execute_multiply(stack: &Stack, memory: &Memory) -> ExecuteResult {
         let right = stack.consume();
         let left = stack.consume();
 
-        let reconciled = ReconciledNumbers::reconcile(left, right);
+        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
 
         let product = match reconciled {
             ReconciledNumbers::Int(a, b) => Value::Int(a * b),
@@ -192,11 +192,11 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_divide(stack: &Stack) -> ExecuteResult {
+    fn execute_divide(stack: &Stack, memory: &Memory) -> ExecuteResult {
         let right = stack.consume();
         let left = stack.consume();
 
-        let reconciled = ReconciledNumbers::reconcile(left, right);
+        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
 
         let dividend = match reconciled {
             ReconciledNumbers::Int(a, b) => Value::Int(a / b),

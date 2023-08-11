@@ -1,13 +1,21 @@
-// use crate::parser::expression::Expression;
-
-// mod parser;
-use interpreter::add;
+use vm::{
+    instruction::Instruction, instruction_graph::InstructionGraph,
+    instruction_sweep::InstructionSweep, VirtualMachine,
+};
 
 fn main() {
-    // println!(
-    //     "{:#?}",
-    //     Expression::from(&String::from("3 + 9").chars().collect(), 0, vec![])
-    //         .unwrap()
-    //         .node
-    // )
+    let graph = InstructionGraph {
+        graph: vec![InstructionSweep {
+            local_variables_count: 1,
+            instructions: vec![
+                Instruction::LoadInt(10),
+                Instruction::Write(0),
+                Instruction::LoadInt(10),
+                Instruction::Use(0),
+                Instruction::Add,
+            ],
+        }],
+    };
+
+    VirtualMachine::new(graph).run();
 }
