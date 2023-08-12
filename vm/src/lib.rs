@@ -5,7 +5,7 @@ use sweep_executor::{SweepExecutor, SweepExecutorResult};
 
 use crate::value::Value;
 
-pub mod arithmetic;
+pub mod array;
 pub mod instruction;
 pub mod instruction_graph;
 pub mod instruction_sweep;

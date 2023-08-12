@@ -1,5 +1,8 @@
+use crate::array::Array;
+use crate::number::Number;
+use crate::value::InimitablePrimitive;
+
 use super::memory::Memory;
-use super::number::ReconciledNumbers;
 use super::stack::Stack;
 use super::value::Value;
 
@@ -16,10 +19,7 @@ pub enum Instruction {
     Use(usize),
 
     // Loading
-    LoadInt(i32),
-    LoadBigInt(i64),
-    LoadFloat(f32),
-    LoadBigFloat(f64),
+    LoadNum(Number),
     LoadStr(String),
     LoadBool(bool),
     LoadNull,
@@ -50,10 +50,7 @@ impl Instruction {
             Instruction::Use(address) => Instruction::execute_use(memory, stack, address.clone()),
 
             // Load
-            Instruction::LoadInt(num) => Instruction::execute_load_int(stack, num),
-            Instruction::LoadBigInt(num) => Instruction::execute_load_big_int(stack, num),
-            Instruction::LoadFloat(num) => Instruction::execute_load_float(stack, num),
-            Instruction::LoadBigFloat(num) => Instruction::execute_load_big_float(stack, num),
+            Instruction::LoadNum(num) => Instruction::execute_load_num(stack, num),
             Instruction::LoadStr(string) => Instruction::execute_load_str(stack, string),
             Instruction::LoadBool(boolean) => Instruction::execute_load_bool(stack, boolean),
             Instruction::LoadNull => Instruction::execute_load_null(stack),
@@ -64,9 +61,9 @@ impl Instruction {
             Instruction::Subtract => Instruction::execute_subtract(stack, memory),
             Instruction::Multiply => Instruction::execute_multiply(stack, memory),
             Instruction::Divide => Instruction::execute_divide(stack, memory),
-            Instruction::Concat => Instruction::execute_concat(stack),
-            Instruction::ArrayPush => Instruction::execute_array_push(stack),
-            Instruction::ArrayPop => Instruction::execute_array_pop(stack),
+            Instruction::Concat => Instruction::execute_concat(stack, memory),
+            Instruction::ArrayPush => Instruction::execute_array_push(stack, memory),
+            Instruction::ArrayPop => Instruction::execute_array_pop(stack, memory),
 
             // Control Flow
             Instruction::Focus(index) => Instruction::execute_focus(stack, index),
@@ -90,26 +87,8 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_load_int(stack: &Stack, num: &i32) -> ExecuteResult {
-        stack.push(Value::Int(num.clone()));
-
-        ExecuteResult::Next
-    }
-
-    fn execute_load_big_int(stack: &Stack, num: &i64) -> ExecuteResult {
-        stack.push(Value::BigInt(num.clone()));
-
-        ExecuteResult::Next
-    }
-
-    fn execute_load_float(stack: &Stack, num: &f32) -> ExecuteResult {
-        stack.push(Value::Float(num.clone()));
-
-        ExecuteResult::Next
-    }
-
-    fn execute_load_big_float(stack: &Stack, num: &f64) -> ExecuteResult {
-        stack.push(Value::BigFloat(num.clone()));
+    fn execute_load_num(stack: &Stack, num: &Number) -> ExecuteResult {
+        stack.push(Value::Number(num.clone()));
 
         ExecuteResult::Next
     }
@@ -133,146 +112,122 @@ impl Instruction {
     }
 
     fn execute_load_array(stack: &Stack) -> ExecuteResult {
-        stack.push(Value::Array(Vec::new()));
+        stack.push(Value::Array(Array::new()));
 
         ExecuteResult::Next
     }
 
     fn execute_add(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume();
-        let left = stack.consume();
+        let right = stack.consume().get_num(memory);
+        let left = stack.consume().get_num(memory);
 
-        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
-
-        let sum = match reconciled {
-            ReconciledNumbers::Int(a, b) => Value::Int(a + b),
-            ReconciledNumbers::BigInt(a, b) => Value::BigInt(a + b),
-            ReconciledNumbers::Float(a, b) => Value::Float(a + b),
-            ReconciledNumbers::BigFloat(a, b) => Value::BigFloat(a + b),
-        };
-
-        stack.push(sum);
+        stack.push(Value::Number(left.add(right)));
 
         ExecuteResult::Next
     }
 
     fn execute_subtract(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume();
-        let left = stack.consume();
+        let right = stack.consume().get_num(memory);
+        let left = stack.consume().get_num(memory);
 
-        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
-
-        let subtrahend = match reconciled {
-            ReconciledNumbers::Int(a, b) => Value::Int(a - b),
-            ReconciledNumbers::BigInt(a, b) => Value::BigInt(a - b),
-            ReconciledNumbers::Float(a, b) => Value::Float(a - b),
-            ReconciledNumbers::BigFloat(a, b) => Value::BigFloat(a - b),
-        };
-
-        stack.push(subtrahend);
+        stack.push(Value::Number(left.subtract(right)));
 
         ExecuteResult::Next
     }
 
     fn execute_multiply(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume();
-        let left = stack.consume();
+        let right = stack.consume().get_num(memory);
+        let left = stack.consume().get_num(memory);
 
-        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
-
-        let product = match reconciled {
-            ReconciledNumbers::Int(a, b) => Value::Int(a * b),
-            ReconciledNumbers::BigInt(a, b) => Value::BigInt(a * b),
-            ReconciledNumbers::Float(a, b) => Value::Float(a * b),
-            ReconciledNumbers::BigFloat(a, b) => Value::BigFloat(a * b),
-        };
-
-        stack.push(product);
+        stack.push(Value::Number(left.multiply(right)));
 
         ExecuteResult::Next
     }
 
     fn execute_divide(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume();
-        let left = stack.consume();
+        let right = stack.consume().get_num(memory);
+        let left = stack.consume().get_num(memory);
 
-        let reconciled = ReconciledNumbers::reconcile(left, right, memory);
-
-        let dividend = match reconciled {
-            ReconciledNumbers::Int(a, b) => Value::Int(a / b),
-            ReconciledNumbers::BigInt(a, b) => Value::BigInt(a / b),
-            ReconciledNumbers::Float(a, b) => Value::Float(a / b),
-            ReconciledNumbers::BigFloat(a, b) => Value::BigFloat(a / b),
-        };
-
-        stack.push(dividend);
+        stack.push(Value::Number(left.divide(right)));
 
         ExecuteResult::Next
     }
 
-    fn execute_concat(stack: &Stack) -> ExecuteResult {
-        let right = stack.consume();
-        let left = stack.consume();
+    fn execute_concat(stack: &Stack, memory: &Memory) -> ExecuteResult {
+        let right = stack.consume().get_string(memory);
+        let left = stack.consume().get_string(memory);
 
+        // let mut left_string = match left {
+        //     Value::String(string) => string,
+        //     _ => panic!(
+        //         "Expected str to concat on left, but found {}",
+        //         left.get_human_type()
+        //     ),
+        // };
+        // let right_string = match right {
+        //     Value::String(string) => string,
+        //     _ => panic!(
+        //         "Expected a str to concat on right, but found {}",
+        //         right.get_human_type()
+        //     ),
+        // };
+
+        // We are creating a new string from the two old strings.
+        // If one of the strings is stored in memory, we don't want to change it. This is why we clone
         let mut left_string = match left {
-            Value::String(string) => string,
-            _ => panic!(
-                "Expected str to concat on left, but found {}",
-                left.get_human_type()
-            ),
-        };
-        let right_string = match right {
-            Value::String(string) => string,
-            _ => panic!(
-                "Expected a str to concat on right, but found {}",
-                right.get_human_type()
-            ),
+            InimitablePrimitive::Raw(string) => string,
+            InimitablePrimitive::Ref(reference, _address) => reference.clone(),
         };
 
-        left_string.push_str(&right_string);
-        stack.push(Value::String(left_string));
+        let combined = match right {
+            InimitablePrimitive::Raw(string) => {
+                left_string.push_str(&string);
+                left_string
+            }
+            InimitablePrimitive::Ref(reference, _address) => {
+                left_string.push_str(&*reference);
+                left_string
+            }
+        };
+
+        // left_string.push_str(&right_string);
+        stack.push(Value::String(combined));
 
         ExecuteResult::Next
     }
 
-    fn execute_array_push(stack: &Stack) -> ExecuteResult {
+    fn execute_array_push(stack: &Stack, memory: &Memory) -> ExecuteResult {
         // We do the dangerous pop here because none of these values are actually going anywhere
         // Both of them are going right back on the stack
-        let value = stack.dangerous_pop();
-        let array_value = stack.dangerous_pop();
+        let last_value = stack.dangerous_pop();
+        let second_last_value = stack.dangerous_pop().get_array(memory);
 
-        let mut array = match array_value {
-            Value::Array(array) => array,
-            _ => panic!(
-                "Expected an array on the stack for a push, but found {}",
-                array_value.get_human_type()
-            ),
+        let array = match second_last_value {
+            InimitablePrimitive::Raw(array) => {
+                array.push(last_value);
+                Value::Array(array)
+            }
+            InimitablePrimitive::Ref(reference, address) => {
+                reference.push(last_value);
+                Value::Ref(address)
+            }
         };
 
-        array.push(value);
-        stack.push(Value::Array(array));
+        stack.push(array);
 
         ExecuteResult::Next
     }
 
-    fn execute_array_pop(stack: &Stack) -> ExecuteResult {
+    fn execute_array_pop(stack: &Stack, memory: &Memory) -> ExecuteResult {
         // We use the dangerous pop here because the array isn't going anywhere
-        let array_value = stack.dangerous_pop();
+        let array = stack.dangerous_pop().get_array(memory);
 
-        let mut array = match array_value {
-            Value::Array(array) => array,
-            _ => panic!(
-                "Expected an array on the stack for a pop, but found {}",
-                array_value.get_human_type()
-            ),
+        let (popped, operated_array) = match array {
+            InimitablePrimitive::Raw(array) => (array.pop(), Value::Array(array)),
+            InimitablePrimitive::Ref(array, address) => (array.pop(), Value::Ref(address)),
         };
 
-        let popped = match array.pop() {
-            Some(value) => value,
-            None => Value::Null,
-        };
-
-        stack.push(Value::Array(array));
+        stack.push(operated_array);
         stack.push(popped);
 
         ExecuteResult::Next

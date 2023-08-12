@@ -1,17 +1,21 @@
-use std::collections::HashMap;
+use core::panic;
+use std::cell::Ref;
+
+use crate::{array::Array, memory::Memory, number::Number};
 
 pub enum Value {
     Null,
     Boolean(bool),
     String(String),
-    Int(i32),
-    BigInt(i64),
-    Float(f32),
-    BigFloat(f64),
-    Array(Vec<Value>),
-    Object(HashMap<String, Value>),
-    Ref(usize),
+    Number(Number),
+    Array(Array),
     SweepPointer(usize),
+    Ref(usize),
+}
+
+pub enum InimitablePrimitive<'a, T> {
+    Raw(T),
+    Ref(Ref<'a, T>, usize),
 }
 
 impl Value {
@@ -20,14 +24,71 @@ impl Value {
             Value::Null => String::from("null"),
             Value::Boolean(_) => String::from("bool"),
             Value::String(_) => String::from("str"),
-            Value::Int(_) => String::from("num"),
-            Value::BigInt(_) => String::from("num"),
-            Value::Float(_) => String::from("num"),
-            Value::BigFloat(_) => String::from("num"),
+            Value::Number(_) => String::from("num"),
             Value::Array(_) => String::from("array"),
-            Value::Object(_) => String::from("object"),
             Value::Ref(address) => format!("*{}", address),
             Value::SweepPointer(pointer) => format!("sweep *{}", pointer),
+        }
+    }
+
+    pub fn get_num(self, memory: &Memory) -> Number {
+        match self {
+            Value::Number(num) => num,
+            Value::Ref(address) => match *memory.get(address) {
+                Value::Number(num) => num,
+                _ => panic!("Expected a number"),
+            },
+            _ => panic!("Expected a number"),
+        }
+    }
+
+    pub fn get_boolean(self, memory: &Memory) -> bool {
+        match self {
+            Value::Boolean(boolean) => boolean,
+            Value::Ref(address) => match *memory.get(address) {
+                Value::Boolean(boolean) => boolean,
+                _ => panic!("Expected a boolean"),
+            },
+            _ => panic!("Expected a boolean"),
+        }
+    }
+
+    pub fn get_sweep_pointer(self, memory: &Memory) -> usize {
+        match self {
+            Value::SweepPointer(pointer) => pointer,
+            Value::Ref(address) => match *memory.get(address) {
+                Value::SweepPointer(pointer) => pointer,
+                _ => panic!("Expected a sweep pointer"),
+            },
+            _ => panic!("Expected a sweep pointer"),
+        }
+    }
+
+    pub fn get_string(self, memory: &Memory) -> InimitablePrimitive<String> {
+        match self {
+            Value::String(string) => InimitablePrimitive::Raw(string),
+            Value::Ref(address) => InimitablePrimitive::Ref(
+                Ref::map(memory.get(address), |value| match value {
+                    Value::String(string) => string,
+                    _ => panic!("Expected a string"),
+                }),
+                address,
+            ),
+            _ => panic!("Expected a string"),
+        }
+    }
+
+    pub fn get_array(self, memory: &Memory) -> InimitablePrimitive<Array> {
+        match self {
+            Value::Array(array) => InimitablePrimitive::Raw(array),
+            Value::Ref(address) => InimitablePrimitive::Ref(
+                Ref::map(memory.get(address), |value| match value {
+                    Value::Array(array) => array,
+                    _ => panic!("Expected an array"),
+                }),
+                address,
+            ),
+            _ => panic!("Expected an array"),
         }
     }
 }
