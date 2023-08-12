@@ -24,6 +24,7 @@ pub enum Instruction {
     LoadBool(bool),
     LoadNull,
     LoadArray,
+    LoadSweepPointer(usize),
 
     // Operations
     Add,
@@ -55,6 +56,9 @@ impl Instruction {
             Instruction::LoadBool(boolean) => Instruction::execute_load_bool(stack, boolean),
             Instruction::LoadNull => Instruction::execute_load_null(stack),
             Instruction::LoadArray => Instruction::execute_load_array(stack),
+            Instruction::LoadSweepPointer(pointer) => {
+                Instruction::execute_load_sweep_pointer(stack, pointer)
+            }
 
             // Operations
             Instruction::Add => Instruction::execute_add(stack, memory),
@@ -68,9 +72,9 @@ impl Instruction {
             // Control Flow
             Instruction::Focus(index) => Instruction::execute_focus(stack, index),
             Instruction::Consume => Instruction::execute_consume(stack),
-            Instruction::If(skip_count) => Instruction::execute_if(stack, skip_count),
+            Instruction::If(skip_count) => Instruction::execute_if(stack, skip_count, memory),
             Instruction::Done => ExecuteResult::Done,
-            Instruction::GoTo => Instruction::execute_go_to(stack),
+            Instruction::GoTo => Instruction::execute_go_to(stack, memory),
         }
     }
 
@@ -117,6 +121,12 @@ impl Instruction {
         ExecuteResult::Next
     }
 
+    fn execute_load_sweep_pointer(stack: &Stack, pointer: &usize) -> ExecuteResult {
+        stack.push(Value::SweepPointer(pointer.clone()));
+
+        ExecuteResult::Next
+    }
+
     fn execute_add(stack: &Stack, memory: &Memory) -> ExecuteResult {
         let right = stack.consume().get_num(memory);
         let left = stack.consume().get_num(memory);
@@ -157,21 +167,6 @@ impl Instruction {
         let right = stack.consume().get_string(memory);
         let left = stack.consume().get_string(memory);
 
-        // let mut left_string = match left {
-        //     Value::String(string) => string,
-        //     _ => panic!(
-        //         "Expected str to concat on left, but found {}",
-        //         left.get_human_type()
-        //     ),
-        // };
-        // let right_string = match right {
-        //     Value::String(string) => string,
-        //     _ => panic!(
-        //         "Expected a str to concat on right, but found {}",
-        //         right.get_human_type()
-        //     ),
-        // };
-
         // We are creating a new string from the two old strings.
         // If one of the strings is stored in memory, we don't want to change it. This is why we clone
         let mut left_string = match left {
@@ -190,7 +185,6 @@ impl Instruction {
             }
         };
 
-        // left_string.push_str(&right_string);
         stack.push(Value::String(combined));
 
         ExecuteResult::Next
@@ -251,15 +245,8 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_if(stack: &Stack, skip_count: &usize) -> ExecuteResult {
-        let boolean_value = stack.consume();
-        let boolean = match boolean_value {
-            Value::Boolean(boolean) => boolean,
-            _ => panic!(
-                "Expected a bool for if, but found {}",
-                boolean_value.get_human_type()
-            ),
-        };
+    fn execute_if(stack: &Stack, skip_count: &usize, memory: &Memory) -> ExecuteResult {
+        let boolean = stack.consume().get_boolean(memory);
 
         match boolean {
             true => ExecuteResult::Next,
@@ -267,15 +254,8 @@ impl Instruction {
         }
     }
 
-    fn execute_go_to(stack: &Stack) -> ExecuteResult {
-        let value = stack.consume();
-        let sweep_pointer = match value {
-            Value::SweepPointer(pointer) => pointer,
-            _ => panic!(
-                "Expected a sweep pointer for GoTo, but found {}",
-                value.get_human_type()
-            ),
-        };
+    fn execute_go_to(stack: &Stack, memory: &Memory) -> ExecuteResult {
+        let sweep_pointer = stack.consume().get_sweep_pointer(memory);
 
         ExecuteResult::GoTo(sweep_pointer)
     }

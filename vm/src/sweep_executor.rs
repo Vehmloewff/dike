@@ -56,7 +56,14 @@ impl SweepExecutor<'_> {
         let child = self.child_executor.as_deref_mut();
 
         if child.is_some() {
-            return child.unwrap().tick(stack);
+            return match child.unwrap().tick(stack) {
+                SweepExecutorResult::Done => {
+                    self.child_executor = None;
+
+                    self.next_instruction(1, stack)
+                }
+                SweepExecutorResult::Next => SweepExecutorResult::Next,
+            };
         }
 
         let instruction = self.sweep.get_instruction(self.sweep_index);

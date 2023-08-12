@@ -34,3 +34,25 @@ fn variables_work() {
 
     assert_eq!(value.get_num(&vm.memory).get_int(), 20);
 }
+
+#[test]
+fn call_another_sweep() {
+    println!("Hello");
+
+    let graph = InstructionGraph::new()
+        .add_sweep(
+            InstructionSweep::new(0)
+                .add(Instruction::LoadNum(Number::Int(2)))
+                .add(Instruction::LoadNum(Number::Int(2)))
+                .add(Instruction::LoadSweepPointer(1))
+                .add(Instruction::GoTo)
+                .add(Instruction::LoadNum(Number::Int(1)))
+                .add(Instruction::Subtract),
+        )
+        .add_sweep(InstructionSweep::new(0).add(Instruction::Add));
+
+    let vm = VirtualMachine::new(graph);
+    let value = vm.get_last_value(0);
+
+    assert_eq!(value.get_num(&vm.memory).get_int(), 3);
+}
