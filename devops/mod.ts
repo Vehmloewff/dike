@@ -59,7 +59,7 @@ export async function test(modules: string[]): Promise<void> {
 
 	const getCargoCommands = () => {
 		return cargoDirectories.map((dir) => {
-			const command = `test --manifest-path=${dir}/Cargo.toml --color=always -- --color always`
+			const command = `test --manifest-path=${dir}/Cargo.toml --color=always -- --color=always`
 
 			if (dtils.getEnv() === 'dev') return `cargo watch -x "${command}"`
 			return `cargo ${command}`
