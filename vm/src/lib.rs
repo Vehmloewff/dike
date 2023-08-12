@@ -12,6 +12,7 @@ pub mod instruction_sweep;
 pub mod memory;
 pub mod number;
 pub mod stack;
+pub mod string;
 pub mod sweep_executor;
 pub mod value;
 

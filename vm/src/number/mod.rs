@@ -11,6 +11,13 @@ pub enum Number {
 }
 
 impl Number {
+    pub fn from_usize(num: usize) -> Number {
+        match num > i32::MAX as usize {
+            false => Number::Int(num as i32),
+            true => Number::BigInt(num as i64),
+        }
+    }
+
     pub fn add(self, number: Number) -> Number {
         match ReconciledNumbers::reconcile(self, number) {
             ReconciledNumbers::Int(a, b) => arithmetic::add_ints(a, b),

@@ -1,12 +1,12 @@
 use core::panic;
 use std::cell::Ref;
 
-use crate::{array::Array, memory::Memory, number::Number};
+use crate::{array::Array, memory::Memory, number::Number, string::Str};
 
 pub enum Value {
     Null,
     Boolean(bool),
-    String(String),
+    String(Str),
     Number(Number),
     Array(Array),
     SweepPointer(usize),
@@ -64,7 +64,7 @@ impl Value {
         }
     }
 
-    pub fn get_string(self, memory: &Memory) -> InimitablePrimitive<String> {
+    pub fn get_string(self, memory: &Memory) -> InimitablePrimitive<Str> {
         match self {
             Value::String(string) => InimitablePrimitive::Raw(string),
             Value::Ref(address) => InimitablePrimitive::Ref(

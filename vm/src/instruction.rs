@@ -1,5 +1,6 @@
 use crate::array::Array;
 use crate::number::Number;
+use crate::string::Str;
 use crate::value::InimitablePrimitive;
 
 use super::memory::Memory;
@@ -98,7 +99,7 @@ impl Instruction {
     }
 
     fn execute_load_str(stack: &Stack, string: &String) -> ExecuteResult {
-        stack.push(Value::String(string.clone()));
+        stack.push(Value::String(Str::new(string)));
 
         ExecuteResult::Next
     }
@@ -167,22 +168,19 @@ impl Instruction {
         let right = stack.consume().get_string(memory);
         let left = stack.consume().get_string(memory);
 
-        // We are creating a new string from the two old strings.
-        // If one of the strings is stored in memory, we don't want to change it. This is why we clone
-        let mut left_string = match left {
-            InimitablePrimitive::Raw(string) => string,
-            InimitablePrimitive::Ref(reference, _address) => reference.clone(),
-        };
-
-        let combined = match right {
-            InimitablePrimitive::Raw(string) => {
-                left_string.push_str(&string);
-                left_string
-            }
-            InimitablePrimitive::Ref(reference, _address) => {
-                left_string.push_str(&*reference);
-                left_string
-            }
+        let combined = match left {
+            InimitablePrimitive::Raw(left_string) => match right {
+                InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
+                InimitablePrimitive::Ref(right_string, _address) => {
+                    left_string.concat(&right_string)
+                }
+            },
+            InimitablePrimitive::Ref(left_string, _address) => match right {
+                InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
+                InimitablePrimitive::Ref(right_string, _address) => {
+                    left_string.concat(&right_string)
+                }
+            },
         };
 
         stack.push(Value::String(combined));
