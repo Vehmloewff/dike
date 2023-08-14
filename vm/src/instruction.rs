@@ -1,7 +1,7 @@
-use crate::array::Array;
-use crate::number::Number;
-use crate::string::Str;
-use crate::value::InimitablePrimitive;
+// use crate::array::Array;
+// use crate::number::Number;
+// use crate::string::Str;
+// use crate::value::InimitablePrimitive;
 
 use super::memory::Memory;
 use super::stack::Stack;
@@ -20,21 +20,21 @@ pub enum Instruction {
     Use(usize),
 
     // Loading
-    LoadNum(Number),
-    LoadStr(String),
+    // LoadNum(Number),
+    // LoadStr(String),
     LoadBool(bool),
     LoadNull,
-    LoadArray,
+    // LoadArray,
     LoadSweepPointer(usize),
 
     // Operations
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Concat,
-    ArrayPush,
-    ArrayPop,
+    // Add,
+    // Subtract,
+    // Multiply,
+    // Divide,
+    // Concat,
+    // ArrayPush,
+    // ArrayPop,
 
     // Control flow
     Focus(usize),
@@ -52,23 +52,23 @@ impl Instruction {
             Instruction::Use(address) => Instruction::execute_use(memory, stack, address.clone()),
 
             // Load
-            Instruction::LoadNum(num) => Instruction::execute_load_num(stack, num),
-            Instruction::LoadStr(string) => Instruction::execute_load_str(stack, string),
+            // Instruction::LoadNum(num) => Instruction::execute_load_num(stack, num),
+            // Instruction::LoadStr(string) => Instruction::execute_load_str(stack, string),
             Instruction::LoadBool(boolean) => Instruction::execute_load_bool(stack, boolean),
             Instruction::LoadNull => Instruction::execute_load_null(stack),
-            Instruction::LoadArray => Instruction::execute_load_array(stack),
+            // Instruction::LoadArray => Instruction::execute_load_array(stack),
             Instruction::LoadSweepPointer(pointer) => {
                 Instruction::execute_load_sweep_pointer(stack, pointer)
             }
 
             // Operations
-            Instruction::Add => Instruction::execute_add(stack, memory),
-            Instruction::Subtract => Instruction::execute_subtract(stack, memory),
-            Instruction::Multiply => Instruction::execute_multiply(stack, memory),
-            Instruction::Divide => Instruction::execute_divide(stack, memory),
-            Instruction::Concat => Instruction::execute_concat(stack, memory),
-            Instruction::ArrayPush => Instruction::execute_array_push(stack, memory),
-            Instruction::ArrayPop => Instruction::execute_array_pop(stack, memory),
+            // Instruction::Add => Instruction::execute_add(stack, memory),
+            // Instruction::Subtract => Instruction::execute_subtract(stack, memory),
+            // Instruction::Multiply => Instruction::execute_multiply(stack, memory),
+            // Instruction::Divide => Instruction::execute_divide(stack, memory),
+            // Instruction::Concat => Instruction::execute_concat(stack, memory),
+            // Instruction::ArrayPush => Instruction::execute_array_push(stack, memory),
+            // Instruction::ArrayPop => Instruction::execute_array_pop(stack, memory),
 
             // Control Flow
             Instruction::Focus(index) => Instruction::execute_focus(stack, index),
@@ -92,17 +92,17 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_load_num(stack: &Stack, num: &Number) -> ExecuteResult {
-        stack.push(Value::Number(num.clone()));
+    // fn execute_load_num(stack: &Stack, num: &Number) -> ExecuteResult {
+    //     stack.push(Value::Number(num.clone()));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_load_str(stack: &Stack, string: &String) -> ExecuteResult {
-        stack.push(Value::String(Str::new(string)));
+    // fn execute_load_str(stack: &Stack, string: &String) -> ExecuteResult {
+    //     stack.push(Value::String(Str::new(string)));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
     fn execute_load_bool(stack: &Stack, boolean: &bool) -> ExecuteResult {
         stack.push(Value::Boolean(boolean.clone()));
@@ -116,11 +116,11 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_load_array(stack: &Stack) -> ExecuteResult {
-        stack.push(Value::Array(Array::new()));
+    // fn execute_load_array(stack: &Stack) -> ExecuteResult {
+    //     stack.push(Value::Array(Array::new()));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
     fn execute_load_sweep_pointer(stack: &Stack, pointer: &usize) -> ExecuteResult {
         stack.push(Value::SweepPointer(pointer.clone()));
@@ -128,102 +128,102 @@ impl Instruction {
         ExecuteResult::Next
     }
 
-    fn execute_add(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume().get_num(memory);
-        let left = stack.consume().get_num(memory);
+    // fn execute_add(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     let right = stack.consume().get_num(memory);
+    //     let left = stack.consume().get_num(memory);
 
-        stack.push(Value::Number(left.add(right)));
+    //     stack.push(Value::Number(left.add(right)));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_subtract(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume().get_num(memory);
-        let left = stack.consume().get_num(memory);
+    // fn execute_subtract(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     let right = stack.consume().get_num(memory);
+    //     let left = stack.consume().get_num(memory);
 
-        stack.push(Value::Number(left.subtract(right)));
+    //     stack.push(Value::Number(left.subtract(right)));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_multiply(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume().get_num(memory);
-        let left = stack.consume().get_num(memory);
+    // fn execute_multiply(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     let right = stack.consume().get_num(memory);
+    //     let left = stack.consume().get_num(memory);
 
-        stack.push(Value::Number(left.multiply(right)));
+    //     stack.push(Value::Number(left.multiply(right)));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_divide(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume().get_num(memory);
-        let left = stack.consume().get_num(memory);
+    // fn execute_divide(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     let right = stack.consume().get_num(memory);
+    //     let left = stack.consume().get_num(memory);
 
-        stack.push(Value::Number(left.divide(right)));
+    //     stack.push(Value::Number(left.divide(right)));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_concat(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        let right = stack.consume().get_string(memory);
-        let left = stack.consume().get_string(memory);
+    // fn execute_concat(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     let right = stack.consume().get_string(memory);
+    //     let left = stack.consume().get_string(memory);
 
-        let combined = match left {
-            InimitablePrimitive::Raw(left_string) => match right {
-                InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
-                InimitablePrimitive::Ref(right_string, _address) => {
-                    left_string.concat(&right_string)
-                }
-            },
-            InimitablePrimitive::Ref(left_string, _address) => match right {
-                InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
-                InimitablePrimitive::Ref(right_string, _address) => {
-                    left_string.concat(&right_string)
-                }
-            },
-        };
+    //     let combined = match left {
+    //         InimitablePrimitive::Raw(left_string) => match right {
+    //             InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
+    //             InimitablePrimitive::Ref(right_string, _address) => {
+    //                 left_string.concat(&right_string)
+    //             }
+    //         },
+    //         InimitablePrimitive::Ref(left_string, _address) => match right {
+    //             InimitablePrimitive::Raw(right_string) => left_string.concat(&right_string),
+    //             InimitablePrimitive::Ref(right_string, _address) => {
+    //                 left_string.concat(&right_string)
+    //             }
+    //         },
+    //     };
 
-        stack.push(Value::String(combined));
+    //     stack.push(Value::String(combined));
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_array_push(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        // We do the dangerous pop here because none of these values are actually going anywhere
-        // Both of them are going right back on the stack
-        let last_value = stack.dangerous_pop();
-        let second_last_value = stack.dangerous_pop().get_array(memory);
+    // fn execute_array_push(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     // We do the dangerous pop here because none of these values are actually going anywhere
+    //     // Both of them are going right back on the stack
+    //     let last_value = stack.dangerous_pop();
+    //     let second_last_value = stack.dangerous_pop().get_array(memory);
 
-        let array = match second_last_value {
-            InimitablePrimitive::Raw(array) => {
-                array.push(last_value);
-                Value::Array(array)
-            }
-            InimitablePrimitive::Ref(reference, address) => {
-                reference.push(last_value);
-                Value::Ref(address)
-            }
-        };
+    //     let array = match second_last_value {
+    //         InimitablePrimitive::Raw(array) => {
+    //             array.push(last_value);
+    //             Value::Array(array)
+    //         }
+    //         InimitablePrimitive::Ref(reference, address) => {
+    //             reference.push(last_value);
+    //             Value::Ref(address)
+    //         }
+    //     };
 
-        stack.push(array);
+    //     stack.push(array);
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
-    fn execute_array_pop(stack: &Stack, memory: &Memory) -> ExecuteResult {
-        // We use the dangerous pop here because the array isn't going anywhere
-        let array = stack.dangerous_pop().get_array(memory);
+    // fn execute_array_pop(stack: &Stack, memory: &Memory) -> ExecuteResult {
+    //     // We use the dangerous pop here because the array isn't going anywhere
+    //     let array = stack.dangerous_pop().get_array(memory);
 
-        let (popped, operated_array) = match array {
-            InimitablePrimitive::Raw(array) => (array.pop(), Value::Array(array)),
-            InimitablePrimitive::Ref(array, address) => (array.pop(), Value::Ref(address)),
-        };
+    //     let (popped, operated_array) = match array {
+    //         InimitablePrimitive::Raw(array) => (array.pop(), Value::Array(array)),
+    //         InimitablePrimitive::Ref(array, address) => (array.pop(), Value::Ref(address)),
+    //     };
 
-        stack.push(operated_array);
-        stack.push(popped);
+    //     stack.push(operated_array);
+    //     stack.push(popped);
 
-        ExecuteResult::Next
-    }
+    //     ExecuteResult::Next
+    // }
 
     fn execute_consume(stack: &Stack) -> ExecuteResult {
         stack.consume();

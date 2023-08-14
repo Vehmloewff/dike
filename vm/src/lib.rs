@@ -16,6 +16,8 @@ pub mod string;
 pub mod sweep_executor;
 pub mod value;
 
+mod interop_gen;
+
 #[cfg(test)]
 mod test;
 

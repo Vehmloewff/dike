@@ -1,4 +1,7 @@
-use std::cell::{Ref, RefCell};
+use std::{
+    cell::{Ref, RefCell},
+    mem,
+};
 
 use crate::value::Value;
 
@@ -53,6 +56,16 @@ impl Memory {
     /// Gets the value of an item at a memory address
     pub fn get(&self, address: usize) -> Ref<Value> {
         Ref::map(self.map.borrow(), |map| map.get(address).unwrap())
+    }
+
+    /// Grab a value from memory. The memory address must be revived before it can be used again.
+    pub fn grab(&self, address: usize) -> Value {
+        mem::replace(&mut self.map.borrow_mut()[address], Value::Undefined)
+    }
+
+    /// Revive a memory address. This allows the memory address to be used again.
+    pub fn revive(&self, address: usize, value: Value) {
+        let _ = mem::replace(&mut self.map.borrow_mut()[address], value);
     }
 
     /// Increments the reference count of a memory address

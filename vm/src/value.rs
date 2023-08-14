@@ -1,47 +1,27 @@
-use core::panic;
-use std::cell::Ref;
-
-use crate::{array::Array, memory::Memory, number::Number, string::Str};
+use crate::{interop_gen::RustyValue, memory::Memory};
 
 pub enum Value {
     Null,
+    Undefined,
     Boolean(bool),
-    String(Str),
-    Number(Number),
-    Array(Array),
     SweepPointer(usize),
     Ref(usize),
-}
-
-pub enum InimitablePrimitive<'a, T> {
-    Raw(T),
-    Ref(Ref<'a, T>, usize),
+    RustyValue(RustyValue),
 }
 
 impl Value {
     pub fn get_human_type(&self) -> String {
         match self {
             Value::Null => String::from("null"),
+            Value::Undefined => String::from("undefined"),
             Value::Boolean(_) => String::from("bool"),
-            Value::String(_) => String::from("str"),
-            Value::Number(_) => String::from("num"),
-            Value::Array(_) => String::from("array"),
             Value::Ref(address) => format!("*{}", address),
             Value::SweepPointer(pointer) => format!("sweep *{}", pointer),
+            Value::RustyValue(_) => String::from("native"),
         }
     }
 
-    pub fn get_num(self, memory: &Memory) -> Number {
-        match self {
-            Value::Number(num) => num,
-            Value::Ref(address) => match *memory.get(address) {
-                Value::Number(num) => num,
-                _ => panic!("Expected a number"),
-            },
-            _ => panic!("Expected a number"),
-        }
-    }
-
+    /// Gets value as a boolean, by copying if it is a reference
     pub fn get_boolean(self, memory: &Memory) -> bool {
         match self {
             Value::Boolean(boolean) => boolean,
@@ -53,6 +33,7 @@ impl Value {
         }
     }
 
+    /// Gets value as a sweep pointer, by coping, if it is a reference
     pub fn get_sweep_pointer(self, memory: &Memory) -> usize {
         match self {
             Value::SweepPointer(pointer) => pointer,
@@ -64,31 +45,28 @@ impl Value {
         }
     }
 
-    pub fn get_string(self, memory: &Memory) -> InimitablePrimitive<Str> {
+    /// Grabs a rusty value, removing it from memory if is is a reference. To put the value back in the memory that it once rested, call `RustyValueReviewer::revive`
+    pub fn grab_rusty_value(self, memory: &Memory) -> (RustyValue, RustyValueReviver) {
         match self {
-            Value::String(string) => InimitablePrimitive::Raw(string),
-            Value::Ref(address) => InimitablePrimitive::Ref(
-                Ref::map(memory.get(address), |value| match value {
-                    Value::String(string) => string,
-                    _ => panic!("Expected a string"),
-                }),
-                address,
+            Value::RustyValue(value) => (value, RustyValueReviver(None)),
+            Value::Ref(address) => (
+                match memory.grab(address) {
+                    Value::RustyValue(value) => value,
+                    _ => panic!("Not a rusty value"),
+                },
+                RustyValueReviver(Some(address)),
             ),
-            _ => panic!("Expected a string"),
+            _ => panic!("Expected a rusty value"),
         }
     }
+}
 
-    pub fn get_array(self, memory: &Memory) -> InimitablePrimitive<Array> {
-        match self {
-            Value::Array(array) => InimitablePrimitive::Raw(array),
-            Value::Ref(address) => InimitablePrimitive::Ref(
-                Ref::map(memory.get(address), |value| match value {
-                    Value::Array(array) => array,
-                    _ => panic!("Expected an array"),
-                }),
-                address,
-            ),
-            _ => panic!("Expected an array"),
+pub struct RustyValueReviver(Option<usize>);
+
+impl RustyValueReviver {
+    pub fn revive(self, memory: &Memory, value: RustyValue) {
+        if self.0.is_some() {
+            memory.revive(self.0.unwrap(), Value::RustyValue(value))
         }
     }
 }

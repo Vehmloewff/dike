@@ -50,11 +50,11 @@ impl Stack<'_> {
 fn deref_value(value: &Value, memory: &Memory) {
     match value {
         Value::Ref(address) => memory.deref(*address),
-        Value::Array(array) => {
-            for child in array.0.borrow().iter() {
-                deref_value(child, memory)
-            }
-        }
+        // Value::Array(array) => {
+        //     for child in array.0.borrow().iter() {
+        //         deref_value(child, memory)
+        //     }
+        // }
         _ => (),
     };
 }
