@@ -6,10 +6,11 @@ export interface CrateManifest {
 
 export interface CrateValue {
 	name: string
+	params: string[]
 	methods: CrateFunction[]
 }
 
-export type CrateType = CrateTypeBuiltin | CrateTypeExternal | CrateTypeInternal
+export type CrateType = CrateTypeBuiltin | CrateTypeExternal | CrateTypeInternal | CrateTypeParam
 
 export interface CrateTypeBuiltin {
 	type: 'builtin'
@@ -24,6 +25,11 @@ export interface CrateTypeExternal {
 
 export interface CrateTypeInternal {
 	type: 'internal'
+	name: string
+}
+
+export interface CrateTypeParam {
+	type: 'param'
 	name: string
 }
 
