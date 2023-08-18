@@ -1,5 +1,9 @@
 import { astTranslator, colors, dtils, parser, pathUtils } from './deps.ts'
 
+export async function ci(): Promise<void> {
+	await test([])
+}
+
 export async function addParseTest(args: string[]): Promise<void> {
 	const [name, content] = args
 	if (!name) throw new Error('Expected a text name as the first argument')
